@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "268643827098",
+    "firebase_url": "https://ideli-754ca.firebaseio.com",
+    "project_id": "ideli-754ca",
+    "storage_bucket": "ideli-754ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268643827098:android:6b14dd8f9ed8bfdc410e23",
+        "android_client_info": {
+          "package_name": "acuna.com.i_deli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "268643827098-bkm8dv5g633htt5b27v41btrkoip89q7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "acuna.com.i_deli",
+            "certificate_hash": "6fd01bbb81675c6c28021583441beef45b4394af"
+          }
+        },
+        {
+          "client_id": "268643827098-1cq65vm8k98358tmn7ni7r55aofb3okg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDV8_paonA-YmwRICk_dDRztsGtt_Ne7u4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268643827098-1cq65vm8k98358tmn7ni7r55aofb3okg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
