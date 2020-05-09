@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:el_gordo/Navigation/Info_Place.dart';
-import 'package:el_gordo/Navigation/home_Screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:el_gordo/model/Comidas.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +56,8 @@ Widget _listaCard(
                     child: Column(children: <Widget>[
                       Text(lcomida.comidas[index].nombre),
                       lcomida.comidas[index].estado
-                          ? Text(lcomida.comidas[index].mensaje)
+                          ? Text(lcomida.comidas[index].mensaje,
+                              style: TextStyle(color: Colors.green))
                           : Text(lcomida.comidas[index].mensaje,
                               style: TextStyle(color: Colors.red))
                     ])),
@@ -109,7 +108,7 @@ void _showAlertDialog(BuildContext context, Comidas p) {
               "Tu eleccion se encuentra cerrada, aun asi puedes ver su menu o productos de venta"),
           actions: <Widget>[
             RaisedButton(
-                color: Colors.blueAccent,
+              color: Colors.blueAccent,
               child: Text(
                 "Regresar",
                 style: TextStyle(color: Colors.white),

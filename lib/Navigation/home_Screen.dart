@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:el_gordo/Cuenta/LoginPage.dart';
 import 'package:el_gordo/Navigation/Info_Place.dart';
 import 'package:el_gordo/Widgets/WidgetListaComida.dart';
 import 'package:el_gordo/model/Comidas.dart';
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Text(
       'Proximamente',
     ),
+    LoginPage(),
   ];
 
   @override
@@ -51,10 +53,16 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.trending_up),
             title: Text('Tendencias'),
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            title: Text('Cuenta') ,
+          )
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.amber[800],elevation: 50,
+        showUnselectedLabels: true,
         onTap: _onItemTapped,
+        unselectedItemColor: Colors.grey[800] ,
       ),
       appBar: new AppBar(
         title: new Text(
