@@ -1,5 +1,7 @@
+import 'package:el_gordo/Cuenta/registrarse.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 bool _isLoading = false;
@@ -25,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.all(16.0),
           child: new Form(
               child: new ListView(shrinkWrap: true, children: <Widget>[
-            //showlogo(),
+            showlogo(),
             _showCircularProgress(),
           ])));
     } else {
@@ -35,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             child: new ListView(
               shrinkWrap: true,
               children: <Widget>[
-                //showlogo(),
+                showlogo(),
                 showEmailInput(),
                 showPasswordInput(),
                 SignInButton(
@@ -76,13 +78,13 @@ class _LoginPageState extends State<LoginPage> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0)),
                     onPressed: () {
-                      // _isLoading = true;
-                      // setState(() {});
+                      _isLoading = true;
+                      setState(() {});
 
-                      // _facebooklog(context)
-                      //     .then((FirebaseUser user) =>
-                      //         {revisarUsuario(context, user)})
-                      //     .catchError((e) => print(e));
+                      _facebooklog(context)
+                          .then((FirebaseUser user) =>
+                              {revisarUsario(user)})
+                          .catchError((e) => print(e));
                     },
                     text: "Facebook",
                   ))
@@ -100,8 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                 SignInButton(
                   Buttons.Email,
                   onPressed: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (BuildContext context) => RegisterPage()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => RegisterPage()));
                   },
                   text: "Registrarse con Correo",
                 )
@@ -145,7 +147,27 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
+
+  Future<FirebaseUser> _facebooklog(BuildContext context) async {
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        print("logeado facebook");
+        AuthCredential fbCredential = FacebookAuthProvider.getCredential(
+            accessToken: result.accessToken.token);
+        FirebaseUser user =
+            (await _auth.signInWithCredential(fbCredential)).user;
+        return user;
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        print("cancelado");
+        break;
+      case FacebookLoginStatus.error:
+        print(result.errorMessage.toString());
+        break;
+    }
+  }
   Future<FirebaseUser> googlelogin() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     print(googleUser.toString());
@@ -163,13 +185,28 @@ class _LoginPageState extends State<LoginPage> {
 
     return user;
   }
+  //BSJh4yNGZjeFTK0EMvVMyoQcYQ32
 void revisarUsario(FirebaseUser user){
 print (user.uid);
 print (user.email);
 print(user.phoneNumber);
 print(user.displayName);
-print(user.phoneNumber);
 print(user.photoUrl);
 
+setState(() {
+  _isLoading=false;
+});
   
 }
+}
+Widget showlogo() {
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.fill,
+          image: AssetImage('assets/images/logo.png'),
+        ),
+      ),
+    );
+  }

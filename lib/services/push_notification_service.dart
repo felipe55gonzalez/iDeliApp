@@ -6,9 +6,9 @@ class PushNotificationService {
   initNotifications() {
     _fcm.requestNotificationPermissions();
 
-    _fcm.getToken().then((token) {
-      print(token);
-    });
+    // _fcm.getToken().then((token) {
+    //   print(token);
+    // });
 
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
