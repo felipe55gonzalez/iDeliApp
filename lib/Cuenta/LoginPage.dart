@@ -1,27 +1,46 @@
+import 'package:el_gordo/Cuenta/UserIndb.dart';
 import 'package:el_gordo/Cuenta/registrarse.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'modelUserdataDb.dart';
+
 bool _isLoading = false;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 final FirebaseAuth _auth = FirebaseAuth.instance;
+UserDataDb userData;
+UserInDb userIndb = new UserInDb();
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailInputController;
+  TextEditingController pwdInputController;
+
   @override
+  initState() {
+    emailInputController = new TextEditingController();
+    pwdInputController = new TextEditingController();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     return cuerpo();
   }
-    Widget _showCircularProgress() {
+
+  Widget _showCircularProgress() {
     return Center(child: CircularProgressIndicator());
   }
-  Widget cuerpo() {
 
+  Widget cuerpo() {
+    print(_isLoading);
     if (_isLoading) {
       return Container(
           padding: EdgeInsets.all(16.0),
@@ -43,7 +62,15 @@ class _LoginPageState extends State<LoginPage> {
                 SignInButton(
                   Buttons.Email,
                   text: "Iniciar con Correo",
-                  onPressed: () {},
+                  onPressed: () {
+                    emailsingIn(
+                            emailInputController.text, pwdInputController.text)
+                        .then((FirebaseUser user) {
+                      if (user.uid != null) {
+                        revisarUsario(user);
+                      }
+                    });
+                  },
                 ),
                 Row(
                   children: <Widget>[
@@ -67,8 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                       setState(() {});
 
                       googlelogin()
-                          .then((FirebaseUser user) =>
-                              {revisarUsario(user)})
+                          .then((FirebaseUser user) => {revisarUsario(user)})
                           .catchError((e) => print(e));
                     },
                   )),
@@ -82,8 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                       setState(() {});
 
                       _facebooklog(context)
-                          .then((FirebaseUser user) =>
-                              {revisarUsario(user)})
+                          .then((FirebaseUser user) => {revisarUsario(user)})
                           .catchError((e) => print(e));
                     },
                     text: "Facebook",
@@ -112,10 +137,12 @@ class _LoginPageState extends State<LoginPage> {
           ));
     }
   }
-    Widget showEmailInput() {
+
+  Widget showEmailInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
       child: new TextFormField(
+        controller: emailInputController,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -125,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        validator: (value) => value.isEmpty ? 'Campo vacio' : null,
       ),
     );
   }
@@ -134,6 +161,7 @@ class _LoginPageState extends State<LoginPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
       child: new TextFormField(
+        controller: pwdInputController,
         maxLines: 1,
         obscureText: true,
         autofocus: false,
@@ -143,7 +171,8 @@ class _LoginPageState extends State<LoginPage> {
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'El campo de contraseña esta vacio' : null,
+        validator: (value) =>
+            value.isEmpty ? 'El campo de contraseña esta vacio' : null,
       ),
     );
   }
@@ -153,7 +182,6 @@ class _LoginPageState extends State<LoginPage> {
     final result = await facebookLogin.logIn(['email']);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
-        print("logeado facebook");
         AuthCredential fbCredential = FacebookAuthProvider.getCredential(
             accessToken: result.accessToken.token);
         FirebaseUser user =
@@ -168,10 +196,61 @@ class _LoginPageState extends State<LoginPage> {
         break;
     }
   }
+
+  Future<FirebaseUser> emailsingIn(String email, String password) async {
+    try {
+      FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+              email: email, password: password))
+          .user;
+
+      assert(user != null);
+      assert(await user.getIdToken() != null);
+
+      final FirebaseUser currentUser = await _auth.currentUser();
+      assert(user.uid == currentUser.uid);
+      return user;
+    } catch (e) {
+      handleError(e);
+      return null;
+    }
+  }
+
+  handleError(PlatformException error) {
+    print(error);
+    switch (error.code) {
+      case 'ERROR_USER_NOT_FOUND':
+        showerrorDialog("Usuario no encontrado");
+        break;
+      case 'ERROR_WRONG_PASSWORD':
+        showerrorDialog("La contraseña es incorrecta");
+        break;
+    }
+  }
+
+  void showerrorDialog(String error) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(error),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Volver"),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              )
+            ],
+          );
+        });
+  }
+
   Future<FirebaseUser> googlelogin() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     print(googleUser.toString());
-
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     print(googleAuth.toString());
@@ -185,28 +264,34 @@ class _LoginPageState extends State<LoginPage> {
 
     return user;
   }
-  //BSJh4yNGZjeFTK0EMvVMyoQcYQ32
-void revisarUsario(FirebaseUser user){
-print (user.uid);
-print (user.email);
-print(user.phoneNumber);
-print(user.displayName);
-print(user.photoUrl);
 
-setState(() {
-  _isLoading=false;
-});
-  
-}
-}
-Widget showlogo() {
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.fill,
-          image: AssetImage('assets/images/logo.png'),
-        ),
-      ),
-    );
+  revisarUsario(FirebaseUser user) async {
+    userIndb.revisarUser(user).then((data) {
+      if (data.idUser != "0") {
+        print("========recievedData======");
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pushReplacementNamed('/Home', arguments: data);
+      } else {
+        print("===========opening check data page===========");
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pushReplacementNamed('/Data', arguments: data);
+      }
+    });
   }
+}
+
+Widget showlogo() {
+  return Container(
+    height: 100,
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        fit: BoxFit.fill,
+        image: AssetImage('assets/images/logo.png'),
+      ),
+    ),
+  );
+}

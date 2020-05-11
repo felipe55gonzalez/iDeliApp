@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:el_gordo/Cuenta/InfoCuentaPage.dart';
 import 'package:el_gordo/Cuenta/LoginPage.dart';
+import 'package:el_gordo/Cuenta/checkdata.dart';
+import 'package:el_gordo/Cuenta/modelUserdataDb.dart';
 import 'package:el_gordo/Navigation/Info_Place.dart';
 import 'package:el_gordo/Widgets/WidgetListaComida.dart';
 import 'package:el_gordo/model/Comidas.dart';
@@ -13,8 +16,11 @@ Color gradientStart = Colors.lightBlue; //Change start gradient color here
 Color gradientEnd = Colors.cyan; //Change end gradient color here
 
 int _selectedIndex = 0;
+Data userdataFromdb;
 
 class HomeScreen extends StatefulWidget {
+  final bool logged;
+  HomeScreen({this.logged});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -27,17 +33,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  final List<Widget> _widgetOptions = <Widget>[
-    _opcion(),
-    Mercado(),
-    Text(
-      'Proximamente',
-    ),
-    LoginPage(),
-  ];
 
   @override
   Widget build(BuildContext context) {
+    if (widget.logged) {
+      userdataFromdb = ModalRoute.of(context).settings.arguments;
+    }
+    final List<Widget> _widgetOptions = <Widget>[
+      _opcion(),
+      Mercado(),
+      Text(
+        'Proximamente',
+      ),
+      widget.logged ? InfocuentaPage(userData: userdataFromdb) : LoginPage()
+    ];
+    
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -55,14 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
-            title: Text('Cuenta') ,
+            title: Text('Cuenta'),
           )
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],elevation: 50,
+        selectedItemColor: Colors.amber[800],
+        elevation: 50,
         showUnselectedLabels: true,
         onTap: _onItemTapped,
-        unselectedItemColor: Colors.grey[800] ,
+        unselectedItemColor: Colors.grey[800],
       ),
       appBar: new AppBar(
         title: new Text(

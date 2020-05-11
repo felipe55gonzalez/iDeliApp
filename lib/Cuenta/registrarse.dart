@@ -1,3 +1,4 @@
+import 'package:el_gordo/Cuenta/UserIndb.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -58,9 +59,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void signUp(FirebaseUser user) async {
+    UserInDb db = new UserInDb();
     try {
       await user.sendEmailVerification();
-
+      await db.insertarUser(user.uid, firstNameInputController.text,
+          phoneinputController.text, emailInputController.text, "https://scontent.fntr6-2.fna.fbcdn.net/v/t1.0-9/p960x960/96276824_3258191320860829_191860892101509120_o.jpg?_nc_cat=106&_nc_sid=e007fa&_nc_eui2=AeFObmuiyhxKr6eYn-xmTgj6LyZ1ZVaXz18vJnVlVpfPX0Dnsv3jkI4czi0IpqCGIGlH2YVaeyh_QkX1LmgKJTPb&_nc_ohc=SaA3tApBF6gAX8FajIU&_nc_ht=scontent.fntr6-2.fna&_nc_tp=6&oh=83ffa5b7ec71e2e38a6b39fb65519595&oe=5EDDF046");
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -164,14 +167,23 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  void createuser() {
+  Future<void> createuser() async {
     if (_registerFormKey.currentState.validate()) {
       if (pwdInputController.text == confirmPwdInputController.text) {
-        FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: emailInputController.text,
-                password: pwdInputController.text)
-            .then((currentuser) => {signUp(currentuser.user)});
+        try {
+          await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(
+                  email: emailInputController.text,
+                  password: pwdInputController.text)
+              .then((currentuser) => {signUp(currentuser.user)});
+        } on PlatformException catch (exception) {
+          switch (exception.code) {
+            case 'ERROR_EMAIL_ALREADY_IN_USE':
+              showerrorDialog();
+              break;
+          }
+        }
+        
       } else {
         print("Las contraseñas no coinciden");
         showDialog(
@@ -186,7 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     onPressed: () {
                       setState(() {
                         Navigator.pop(context);
-                        _isloading = false;                        
+                        _isloading = false;
                       });
                     },
                   )
@@ -195,6 +207,28 @@ class _RegisterPageState extends State<RegisterPage> {
             });
       }
     }
+  }
+
+  void showerrorDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(
+                "Ha ocurrido un error verifica tus datos, este mensaje puede aparecer cuando el correo que intentas registrar ya esta en uso"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Volver"),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              )
+            ],
+          );
+        });
   }
 
   void notificarNum() {
