@@ -1,13 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:el_gordo/model/ProductosComida.dart';
+import 'package:el_gordo/services/cart/addtocart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class WidMenu extends StatefulWidget {
   final List<Lista> lista;
+  final bool haveUser;
 
-  WidMenu({this.lista});
+  WidMenu({this.lista,this.haveUser});
   @override
   _WidMenuState createState() => _WidMenuState();
 }
@@ -35,13 +36,14 @@ class _WidMenuState extends State<WidMenu> {
                                 color: Colors.black.withOpacity(0.4),
                                 spreadRadius: 2.0)
                           ]),
-                      child: Column(
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
                         children: <Widget>[
                           Stack(
                             children: <Widget>[
                               Container(
                                 height:
-                                    (MediaQuery.of(context).size.height) - 400,
+                                    (MediaQuery.of(context).size.height) - 440,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10.0),
@@ -52,15 +54,16 @@ class _WidMenuState extends State<WidMenu> {
                               ),
                             ],
                           ),
+                          SizedBox(height: 10.0),
                           Text(
                             i.nombre,
                             style: TextStyle(
-                              fontSize: 30.0,
+                              fontSize: 25.0,
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 10.0),
+                          Divider(),
                           Text(
                             new String.fromCharCode(36) + i.precio,
                             style: TextStyle(
@@ -75,7 +78,10 @@ class _WidMenuState extends State<WidMenu> {
                               fontSize: 20.0,
                             ),
                             textAlign: TextAlign.center,
-                          )
+                          ),
+                          widget.haveUser?
+                          AddToCartMenu():
+                          Divider()
                         ],
                       ),
                     ));
@@ -84,7 +90,7 @@ class _WidMenuState extends State<WidMenu> {
           }).toList(),
           options: CarouselOptions(
               height: (MediaQuery.of(context).size.height) - 165,
-              autoPlay: true,
+              autoPlay: false,
               enlargeCenterPage: true,
               aspectRatio: 2.0,
               onPageChanged: (index, reason) {

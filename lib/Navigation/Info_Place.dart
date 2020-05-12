@@ -15,8 +15,10 @@ bool _notloading = true;
 
 class InfoPlace extends StatefulWidget {
   final Comidas place;
+  final bool haveUser; 
 
-  InfoPlace({this.place});
+
+  InfoPlace({this.place,this.haveUser});
 
   @override
   _InfoPlaceState createState() => _InfoPlaceState();
@@ -78,7 +80,7 @@ class _InfoPlaceState extends State<InfoPlace> {
                                 setState(() {
                                   _notloading = false;
                                   loadProductos(context, widget.place.nombre,
-                                      widget.place.idRestaurante);
+                                      widget.place.idRestaurante,widget.haveUser);
                                 });
                               },
                               shape: CircleBorder(),
@@ -277,14 +279,13 @@ Future<void> openFacebook(String url) async {
   }
 }
 
-Future loadProductos(BuildContext context, String name, String id) async {
+Future loadProductos(BuildContext context, String name, String id,bool haveUser) async {
   ProductosComida productos;
   try {
     var url = "https://expertsystemsacuna.000webhostapp.com/SelectFmenu.php";
     var jsonString = await http.post(url, body: {
       "id": id,
     });
-    print(jsonString.body);
     _notloading = true;
     final jsonResponse = json.decode(jsonString.body);
     productos = new ProductosComida.fromJson(jsonResponse);
@@ -293,6 +294,6 @@ Future loadProductos(BuildContext context, String name, String id) async {
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
             pageBuilder: (_, __, ___) =>
-                TabsMenu(prod: productos, titulo: name)));
+                TabsMenu(prod: productos, titulo: name,haveUser:haveUser)));
   } catch (_) {}
 }

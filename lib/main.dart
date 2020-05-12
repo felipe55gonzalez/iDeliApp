@@ -25,10 +25,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: 'iDeli Acuña',
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(logged: false),
+        home: HomeScreen(islogged: false),
         routes: <String, WidgetBuilder>{
           '/Data': (BuildContext context) => new CheckDataPage(),
-          '/Home': (BuildContext context) => new HomeScreen(logged: true)
+          '/Home': (BuildContext context) => new HomeScreen(islogged: true)
         });
   }
 }

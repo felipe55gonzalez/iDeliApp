@@ -19,8 +19,8 @@ int _selectedIndex = 0;
 Data userdataFromdb;
 
 class HomeScreen extends StatefulWidget {
-  final bool logged;
-  HomeScreen({this.logged});
+  final bool islogged;
+  HomeScreen({this.islogged});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -36,18 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.logged) {
+    if (widget.islogged) {
       userdataFromdb = ModalRoute.of(context).settings.arguments;
     }
     final List<Widget> _widgetOptions = <Widget>[
-      _opcion(),
+      _opcion(widget.islogged),
       Mercado(),
       Text(
         'Proximamente',
       ),
-      widget.logged ? InfocuentaPage(userData: userdataFromdb) : LoginPage()
+      widget.islogged ? InfocuentaPage(userData: userdataFromdb) : LoginPage()
     ];
-    
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -60,8 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text('Supermercados'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            title: Text('Tendencias'),
+            icon: Icon(Icons.line_style),
+            title: Text('Clasificados'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),
@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  static Widget _opcion() {
+  Widget _opcion(bool logged) {
     return Container(
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 17, color: Colors.white),
                       textAlign: TextAlign.left,
                     )),
-                _carousel(snapshot.data),
+                _carousel(snapshot.data,logged),
                 WidgetListaComida()
               ],
             );
@@ -128,14 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  static Widget _carousel(ListComida pls) {
+  Widget _carousel(ListComida pls,bool logged) {
     return CarouselSlider(
       items: pls.comidas.map((i) {
         return Builder(
           builder: (BuildContext context) {
             return new GestureDetector(
                 onTap: () {
-                  _cargarInfo(context, i);
+                  _cargarInfo(context, i,logged);
                 },
                 child: Container(
                   height: 25.0,
@@ -222,19 +222,19 @@ Future<ListComida> loadComidas() async {
   }
 }
 
-void _cargarInfo(BuildContext context, Comidas p) {
+void _cargarInfo(BuildContext context, Comidas p,bool logged) {
   if (p.estado) {
     Navigator.push(
         context,
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) => InfoPlace(place: p)));
+            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged)));
   } else {
-    _showAlertDialog(context, p);
+    _showAlertDialog(context, p,logged);
   }
 }
 
-void _showAlertDialog(BuildContext context, Comidas p) {
+void _showAlertDialog(BuildContext context, Comidas p,bool logged) {
   showDialog(
       context: context,
       builder: (buildcontext) {
@@ -261,11 +261,11 @@ void _showAlertDialog(BuildContext context, Comidas p) {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                        transitionDuration: Duration(milliseconds: 500),
-                        pageBuilder: (_, __, ___) => InfoPlace(place: p)));
+               Navigator.push(
+        context,
+        PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 500),
+            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged)));
               },
             )
           ],

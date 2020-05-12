@@ -286,7 +286,6 @@ Future loadProductos(BuildContext context, String name, String id) async {
       "id": id,
     });
     _notloading = true;
-    print(jsonString.body);
     final jsonResponse = json.decode(jsonString.body);
     productos = new ProductosComida.fromJson(jsonResponse);
     Navigator.push(

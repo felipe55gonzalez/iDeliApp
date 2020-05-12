@@ -135,7 +135,6 @@ Future<ListMercados> loadplaces() async {
   try {
     var jsonString = await http.get(
         "http://expertsystemsacuna.000webhostapp.com/Mercados/Mercados.php");
-    print(jsonString);
     final jsonResponse = json.decode(jsonString.body);
     toplist = new ListMercados.fromJson(jsonResponse);
     return toplist;

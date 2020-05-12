@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 class TabsMenu extends StatelessWidget {
   final ProductosComida prod;
   final String titulo;
+  final bool haveUser;
 
-  TabsMenu({this.prod,this.titulo});
+  TabsMenu({this.prod, this.titulo,this.haveUser});
   @override
   Widget build(BuildContext context) {
-    print(prod.categorias.length);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: DefaultTabController(
         length: prod.categorias.length,
         child: Scaffold(
@@ -19,18 +20,28 @@ class TabsMenu extends StatelessWidget {
             backgroundColor: Colors.cyan,
             bottom: TabBar(
               tabs: List<Widget>.generate(prod.categorias.length, (int i) {
-                print(i);
                 return new Tab(text: prod.categorias[i].nombre);
               }),
             ),
-            title: Text("MENU "+new String.fromCharCode(34)+titulo+new String.fromCharCode(34)),
+            title: Text("MENU " +
+                new String.fromCharCode(34) +
+                titulo +
+                new String.fromCharCode(34)),
+            actions: <Widget>[
+              haveUser?
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                color: Colors.blueGrey,
+                iconSize: 30,
+                onPressed: () {},
+              ):
+              SizedBox(height: 3,)
+            ],
           ),
           body: TabBarView(
             children: List<Widget>.generate(prod.categorias.length, (int i) {
-                print(i);
-                return WidMenu(lista:prod.categorias[i].lista);
-              }),
-    
+              return WidMenu(lista: prod.categorias[i].lista,haveUser:haveUser);
+            }),
           ),
         ),
       ),

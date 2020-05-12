@@ -5,6 +5,8 @@ import 'package:el_gordo/model/Comidas.dart';
 import 'package:flutter/material.dart';
 
 class WidgetListaComida extends StatefulWidget {
+  final bool logged;
+  WidgetListaComida({this.logged});
   @override
   _WidgetListaComidaState createState() => _WidgetListaComidaState();
 }
@@ -16,7 +18,7 @@ class _WidgetListaComidaState extends State<WidgetListaComida> {
       future: loadComidas(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return _listaCard(snapshot.data);
+          return _listaCard(snapshot.data, widget.logged);
         } else if (snapshot.hasError) {
           return new Text("error");
         }
@@ -26,9 +28,7 @@ class _WidgetListaComidaState extends State<WidgetListaComida> {
   }
 }
 
-Widget _listaCard(
-  ListComida lcomida,
-) {
+Widget _listaCard(ListComida lcomida, bool logged) {
   return Expanded(
       child: ListView.builder(
     scrollDirection: Axis.vertical,
@@ -39,7 +39,7 @@ Widget _listaCard(
         elevation: 10,
         child: new InkWell(
           onTap: () {
-            _cargarInfo(ctxt, lcomida.comidas[index]);
+            _cargarInfo(ctxt, lcomida.comidas[index], logged);
           },
           child: Column(
             children: <Widget>[
@@ -77,7 +77,6 @@ Future<ListComida> loadComidas() async {
   try {
     var jsonString = await http
         .get("https://expertsystemsacuna.000webhostapp.com/ComidasEstado.php");
-    //print(jsonString.body);
     final jsonResponse = json.decode(jsonString.body);
     lcomida = new ListComida.fromJson(jsonResponse);
     return lcomida;
@@ -86,19 +85,22 @@ Future<ListComida> loadComidas() async {
   }
 }
 
-void _cargarInfo(BuildContext context, Comidas p) {
+void _cargarInfo(BuildContext context, Comidas p, bool logged) {
   if (p.estado) {
     Navigator.push(
         context,
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) => InfoPlace(place: p)));
+            pageBuilder: (_, __, ___) => InfoPlace(
+                  place: p,
+                  haveUser: logged,
+                )));
   } else {
-    _showAlertDialog(context, p);
+    _showAlertDialog(context, p,logged);
   }
 }
 
-void _showAlertDialog(BuildContext context, Comidas p) {
+void _showAlertDialog(BuildContext context, Comidas p,bool logged) {
   showDialog(
       context: context,
       builder: (buildcontext) {
@@ -129,7 +131,10 @@ void _showAlertDialog(BuildContext context, Comidas p) {
                     context,
                     PageRouteBuilder(
                         transitionDuration: Duration(milliseconds: 500),
-                        pageBuilder: (_, __, ___) => InfoPlace(place: p)));
+                        pageBuilder: (_, __, ___) => InfoPlace(
+                              place: p,
+                              haveUser: logged,
+                            )));
               },
             )
           ],
