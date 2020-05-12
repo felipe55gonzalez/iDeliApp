@@ -1,4 +1,5 @@
 import 'package:el_gordo/Cuenta/modelUserdataDb.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class InfocuentaPage extends StatefulWidget {
@@ -78,12 +79,26 @@ class _InfocuentaPageState extends State<InfocuentaPage> {
                               splashColor: Colors.blueAccent,
                               child: Text("Editar"),
                               onPressed: () {},
-                            )
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
+                ),
+                FlatButton(
+                  color: Colors.cyan,
+                  textColor: Colors.white,
+                  disabledColor: Colors.grey,
+                  disabledTextColor: Colors.black,
+                  padding: EdgeInsets.all(8.0),
+                  splashColor: Colors.blueAccent,
+                  child: Text("Cerrar Sesion"),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut().then((onValue) {
+                      Navigator.of(context).pushReplacementNamed('/logout');
+                    });
+                  },
                 )
               ],
             ))

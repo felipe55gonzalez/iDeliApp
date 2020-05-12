@@ -268,13 +268,11 @@ class _LoginPageState extends State<LoginPage> {
   revisarUsario(FirebaseUser user) async {
     userIndb.revisarUser(user).then((data) {
       if (data.idUser != "0") {
-        print("========recievedData======");
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pushReplacementNamed('/Home', arguments: data);
       } else {
-        print("===========opening check data page===========");
         setState(() {
           _isLoading = false;
         });

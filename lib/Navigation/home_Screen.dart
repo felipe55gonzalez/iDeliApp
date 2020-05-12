@@ -88,7 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Widget _opcion(bool logged) {
     return Container(
       decoration: new BoxDecoration(

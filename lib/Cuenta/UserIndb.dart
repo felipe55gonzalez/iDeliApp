@@ -33,14 +33,14 @@ class UserInDb {
         "uid": user.uid,
       });
       if (response.body != "0") {
-        print("========ConvertingData======");
+        // print("========ConvertingData======");
         final jsonResponse = json.decode(response.body);
         db = new UserDataDb.fromJson(jsonResponse);
         userdata = db.data[0];
         return userdata;
       } else {
-        print("========New User======");
-        print("========data must be captured======");
+        // print("========New User======");
+        // print("========data must be captured======");
         db = new UserDataDb.fromJson({
           "Data": [
             {
@@ -54,9 +54,34 @@ class UserInDb {
           ]
         });
         userdata = db.data[0];
-        print("===========default data wrote===========");
+        //print("===========default data wrote===========");
         return userdata;
       }
     } catch (_) {}
+  }
+    Future<FirebaseUser> isUsersignedin() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+print("revisandousuario");
+    if (user != null) {
+      print("logeado");
+      return user;
+
+    } else {
+       print("nologeado");
+      return user;
+
+    }
+  }
+  
+  revisarUsariologeado(FirebaseUser user,BuildContext context) async {
+    this.revisarUser(user).then((data) {
+      if (data.idUser != "0") {
+
+        Navigator.of(context).pushReplacementNamed('/Home', arguments: data);
+      } else {
+
+        Navigator.of(context).pushReplacementNamed('/Data', arguments: data);
+      }
+    });
   }
 }

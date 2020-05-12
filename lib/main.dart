@@ -1,7 +1,10 @@
+import 'package:el_gordo/Cuenta/LoginPage.dart';
 import 'package:el_gordo/services/push_notification_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:el_gordo/Navigation/home_Screen.dart';
 
+import 'Cuenta/UserIndb.dart';
 import 'Cuenta/checkdata.dart';
 
 void main() => runApp(MyApp());
@@ -25,10 +28,33 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: 'iDeli Acuña',
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(islogged: false),
+        home: FutureBuilder(
+          future: userIndb.isUsersignedin(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              FirebaseUser user = snapshot.data;
+              if (user != null) {
+                print("usuario logeado");
+              UserInDb db =new UserInDb();
+              db.revisarUsariologeado(user, context);
+              } else {
+                  print("usuario no logeado");
+                return HomeScreen(islogged: false);
+              }
+            }
+            if(snapshot.data==null){
+              print("no data");
+              return HomeScreen(islogged: false);
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
         routes: <String, WidgetBuilder>{
           '/Data': (BuildContext context) => new CheckDataPage(),
-          '/Home': (BuildContext context) => new HomeScreen(islogged: true)
+          '/Home': (BuildContext context) => new HomeScreen(islogged: true),
+          '/logout': (BuildContext context) => new HomeScreen(islogged: false)
         });
   }
 }
