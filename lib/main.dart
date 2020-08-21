@@ -3,6 +3,7 @@ import 'package:el_gordo/services/push_notification_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:el_gordo/Navigation/home_Screen.dart';
+import 'package:lottie/lottie.dart';
 
 import 'Cuenta/UserIndb.dart';
 import 'Cuenta/checkdata.dart';
@@ -47,7 +48,7 @@ class _MyAppState extends State<MyApp> {
               return HomeScreen(islogged: false);
             }
             return Center(
-              child: CircularProgressIndicator(),
+              child:  Lottie.asset('assets/lotties/splash.json'),
             );
           },
         ),

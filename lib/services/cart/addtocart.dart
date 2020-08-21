@@ -1,7 +1,13 @@
+import 'package:el_gordo/model/Comidas.dart';
+import 'package:el_gordo/model/PedidoLocal.dart';
+import 'package:el_gordo/model/ProductosComida.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class AddToCartMenu extends StatefulWidget {
+  final Lista producto;
+  final PedidoLocal carito;
+  const AddToCartMenu({this.carito, this.producto});
   @override
   _AddToCartMenuState createState() => _AddToCartMenuState();
 }
@@ -66,7 +72,28 @@ class _AddToCartMenuState extends State<AddToCartMenu> {
           padding: EdgeInsets.all(8.0),
           splashColor: Colors.blueAccent,
           child: Text("Agregar a la Orden"),
-          onPressed: () {},
+          onPressed: () {
+            if (widget.carito.pedido == null) {
+              widget.carito.pedido=[];
+              print("listo para cargar al carito");              
+              widget.carito.pedido.add(new Pedido.fromJson({
+                "Nombre": widget.producto.nombre,
+                "Descripcion":
+                    widget.producto.descripcion,
+                "PrecioU": double.parse(widget.producto.precio),
+                "cant": cant,
+                "importe": double.parse(widget.producto.precio)*cant,
+                "indicacion": "bien dorados",
+                "Img":
+                    widget.producto.imagen
+              }));
+              
+            } else {
+                print(widget.carito.pedido[0].descripcion);
+                print(widget.carito.pedido[0].precioU);
+                print(widget.carito.pedido[0].importe);
+            }
+          },
         )
       ],
     ));

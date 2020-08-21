@@ -227,7 +227,7 @@ void _cargarInfo(BuildContext context, Comidas p,bool logged) {
         context,
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged)));
+            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged,userdataFromdb: userdataFromdb)));
   } else {
     _showAlertDialog(context, p,logged);
   }
@@ -260,11 +260,11 @@ void _showAlertDialog(BuildContext context, Comidas p,bool logged) {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-               Navigator.push(
+                Navigator.push(
         context,
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged)));
+            pageBuilder: (_, __, ___) => InfoPlace(place: p,haveUser:logged,userdataFromdb: userdataFromdb)));
               },
             )
           ],

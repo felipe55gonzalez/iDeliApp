@@ -48,7 +48,7 @@ Widget _listaCard(ListComida lcomida, bool logged) {
                   width: 70,
                   height: 70,
                   placeholder: 'assets/images/loading.gif',
-                  image: lcomida.comidas[index].urlImage,
+                  image: lcomida.comidas[index].urlImage,                
                   fit: BoxFit.fill,
                 ),
                 title: Align(
@@ -96,11 +96,11 @@ void _cargarInfo(BuildContext context, Comidas p, bool logged) {
                   haveUser: logged,
                 )));
   } else {
-    _showAlertDialog(context, p,logged);
+    _showAlertDialog(context, p, logged);
   }
 }
 
-void _showAlertDialog(BuildContext context, Comidas p,bool logged) {
+void _showAlertDialog(BuildContext context, Comidas p, bool logged) {
   showDialog(
       context: context,
       builder: (buildcontext) {

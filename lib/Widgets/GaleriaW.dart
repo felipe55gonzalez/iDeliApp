@@ -51,15 +51,15 @@ class _WidgetGaleriaState extends State<WidgetGaleria> {
                 return new GestureDetector(
                   onTap: () {},
                   child: Column(
-                    children: <Widget>[
-                      FadeInImage.assetNetwork(
-                        width: (MediaQuery.of(context).size.width) - 100,
-                        height: (MediaQuery.of(context).size.height) - 175,
-                        placeholder: 'assets/images/loading.gif',
-                        image: i.url,
-                        fit: BoxFit.fill,
-                      )
-                    ],
+                    // children: <Widget>[
+                    //   FadeInImage.assetNetwork(
+                    //     width: (MediaQuery.of(context).size.width) - 100,
+                    //     height: (MediaQuery.of(context).size.height) - 175,
+                    //     placeholder: 'assets/images/loading.gif',
+                    //     image: i.url,
+                    //     fit: BoxFit.fill,
+                    //   )
+                    // ],
                   ),
                   // )
                 );

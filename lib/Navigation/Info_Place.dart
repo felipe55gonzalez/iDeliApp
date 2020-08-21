@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:el_gordo/Cuenta/modelUserdataDb.dart';
 import 'package:el_gordo/Navigation/TabsMenu.dart';
+import 'package:el_gordo/Navigation/home_Screen.dart';
 import 'package:el_gordo/Widgets/GaleriaW.dart';
 import 'package:el_gordo/model/Comidas.dart';
 import 'package:el_gordo/model/ProductosComida.dart';
@@ -15,10 +17,10 @@ bool _notloading = true;
 
 class InfoPlace extends StatefulWidget {
   final Comidas place;
-  final bool haveUser; 
+  final bool haveUser;
+  final Data userdataFromdb;
 
-
-  InfoPlace({this.place,this.haveUser});
+  InfoPlace({this.place, this.haveUser, this.userdataFromdb});
 
   @override
   _InfoPlaceState createState() => _InfoPlaceState();
@@ -79,8 +81,12 @@ class _InfoPlaceState extends State<InfoPlace> {
                               onPressed: () {
                                 setState(() {
                                   _notloading = false;
-                                  loadProductos(context, widget.place.nombre,
-                                      widget.place.idRestaurante,widget.haveUser);
+                                  loadProductos(
+                                      context,
+                                      widget.place.nombre,
+                                      widget.place.idRestaurante,
+                                      widget.haveUser,
+                                      widget.place);
                                 });
                               },
                               shape: CircleBorder(),
@@ -265,7 +271,7 @@ class _InfoPlaceState extends State<InfoPlace> {
           ],
         ));
   }
-}
+
 
 Future<void> openFacebook(String url) async {
   try {
@@ -279,21 +285,31 @@ Future<void> openFacebook(String url) async {
   }
 }
 
-Future loadProductos(BuildContext context, String name, String id,bool haveUser) async {
+Future loadProductos(BuildContext context, String name, String id,
+  bool haveUser, Comidas place) async {
   ProductosComida productos;
   try {
     var url = "https://expertsystemsacuna.000webhostapp.com/SelectFmenu.php";
     var jsonString = await http.post(url, body: {
       "id": id,
     });
-    _notloading = true;
+    setState(() {
+      _notloading = true;
+    });
+    
     final jsonResponse = json.decode(jsonString.body);
     productos = new ProductosComida.fromJson(jsonResponse);
     Navigator.push(
         context,
         PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) =>
-                TabsMenu(prod: productos, titulo: name,haveUser:haveUser)));
+            pageBuilder: (_, __, ___) => TabsMenu(
+                  prod: productos,
+                  titulo: name,
+                  haveUser: haveUser,
+                  place: place,
+                  userdataFromDB: userdataFromdb,
+                )));
   } catch (_) {}
+}
 }

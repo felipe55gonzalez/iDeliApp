@@ -1,4 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:el_gordo/model/Comidas.dart';
+import 'package:el_gordo/model/PedidoLocal.dart';
 import 'package:el_gordo/model/ProductosComida.dart';
 import 'package:el_gordo/services/cart/addtocart.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,8 +9,9 @@ import 'package:flutter/material.dart';
 class WidMenu extends StatefulWidget {
   final List<Lista> lista;
   final bool haveUser;
-
-  WidMenu({this.lista,this.haveUser});
+  final Comidas place;
+  final PedidoLocal carito;
+  WidMenu({this.lista,this.haveUser,this.place,this.carito});
   @override
   _WidMenuState createState() => _WidMenuState();
 }
@@ -80,7 +83,7 @@ class _WidMenuState extends State<WidMenu> {
                             textAlign: TextAlign.center,
                           ),
                           widget.haveUser?
-                          AddToCartMenu():
+                          AddToCartMenu(carito: widget.carito,producto:i):
                           Divider()
                         ],
                       ),
