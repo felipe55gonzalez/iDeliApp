@@ -53,7 +53,7 @@ class Lista {
   String nombre;
   String descripcion;
   String disponible;
-  String precio;
+  double precio;
   String imagen;
   String categoria;
   String lunes;
@@ -87,7 +87,7 @@ class Lista {
     nombre = json['Nombre'];
     descripcion = json['Descripcion'];
     disponible = json['Disponible'];
-    precio = json['Precio'];
+    precio =double.parse( json['Precio']);
     imagen = json['Imagen'];
     categoria = json['Categoria'];
     lunes = json['Lunes'];

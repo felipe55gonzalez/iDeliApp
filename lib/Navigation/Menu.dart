@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:el_gordo/Navigation/TabsMenu.dart';
 import 'package:el_gordo/model/Comidas.dart';
 import 'package:el_gordo/model/PedidoLocal.dart';
 import 'package:el_gordo/model/ProductosComida.dart';
@@ -68,7 +69,7 @@ class _WidMenuState extends State<WidMenu> {
                           ),
                           Divider(),
                           Text(
-                            new String.fromCharCode(36) + i.precio,
+                            new String.fromCharCode(36) + i.precio.toString(),
                             style: TextStyle(
                               color: Colors.black54,
                               fontSize: 25.0,

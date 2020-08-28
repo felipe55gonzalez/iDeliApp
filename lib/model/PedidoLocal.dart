@@ -1,5 +1,8 @@
+import 'dart:async';
+
 class PedidoLocal {
   String idRestaurant;
+  String nombrelocal;
   String informacion;
   String telefono;
   String dirreccion;
@@ -9,6 +12,7 @@ class PedidoLocal {
   bool userVerificado;
   List<Pedido> pedido;
   int total;
+  StreamController strm;
 
   PedidoLocal(
       {this.idRestaurant,
@@ -20,7 +24,9 @@ class PedidoLocal {
       this.userNumber,
       this.userVerificado,
       this.pedido,
-      this.total});
+      this.total,
+      this.strm
+      });
 
   PedidoLocal.fromJson(Map<String, dynamic> json) {
     idRestaurant = json['IdRestaurant'];
@@ -59,16 +65,19 @@ class PedidoLocal {
 }
 
 class Pedido {
+  String idProducto;
   String nombre;
   String descripcion;
-  int precioU;
+  double precioU;
   int cant;
-  int importe;
+  double importe;
   String indicacion;
   String img;
 
   Pedido(
-      {this.nombre,
+      {
+      this.idProducto, 
+      this.nombre,
       this.descripcion,
       this.precioU,
       this.cant,
@@ -77,6 +86,7 @@ class Pedido {
       this.img});
 
   Pedido.fromJson(Map<String, dynamic> json) {
+    idProducto=json['IdProducto'];
     nombre = json['Nombre'];
     descripcion = json['Descripcion'];
     precioU = json['PrecioU'];
@@ -88,6 +98,7 @@ class Pedido {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['IdProducto']=this.idProducto;
     data['Nombre'] = this.nombre;
     data['Descripcion'] = this.descripcion;
     data['PrecioU'] = this.precioU;
